@@ -1,0 +1,720 @@
+---
+title: "Taller Exploración de Datos (EDA)"
+author: "Jonatan Camilo Igua Contreras  \nID: 808919 | NRC: 73466\n"
+date: "2025-03-14"
+output:
+  pdf_document: default
+  word_document: default
+subtitle: Minería de Datos
+fontsize: 12pt
+geometry: a4paper
+---
+## 1. Análisis descriptivo del dataset Iris
+**1.1 Carga y exploración de los datos**  
+
+**Importar dataset Iris en R**:
+Para importar el dataset de Iris solo se usa el comando data(), que tiene la función de cargar datasets.
+```{r data}
+data(iris)
+```
+**Datos del dataset Iris**:
+Usando el comando head(), se puede ver la estructura del dataset de Iris
+```{r ver_Data}
+head(iris)
+```
+
+**Visualizar la estructura de los datos**
+Con el comando str() se puede visualizar la estructura del conjunto de datos,se puede apreciar que el dataset cuenta con 150 observaciones osea 150 filas y 5 variables (Sepal.Length , Sepal.Width , Petal.Length , Petal.With , Species).
+Cada una de estas variables son numéricas, execto la de species que es un factor que cuenta con tres niveles (setosa, versicolor , virginica)
+
+```{r str_iris}
+str(iris)
+```
+
+Con el comando colnames() se pueden solo ver las columnas del dataset iris.
+```{r colums_iris}
+colnames(iris)
+```
+**Tipos de datos**:
+Usando el comando sapply() con la función class() se puede visualizar el tipo de dato de cada columna del dataset, se encontró que las cuatro variables son de tipo numéricas pero la variable de species es de tipo factor que cuenta con categorias para cada especie de iris.
+```{r sapply_iris}
+sapply(iris, class)
+```
+**Verificar dimensiones**:
+Para poder verificar las dimensiones del dataset de iris se usa el comando dim(), este comando retorna el numero de filas y columnas del del dataset.
+El resultado obtenido es que el dataset tiene 150 filas y 5 columnas.
+```{r dim_iris, echo=FALSE}
+dim(iris)
+```
+
+Se puede consultar de manera individual las dimensiones con el comando nrow() se pueden visualizarlas filas y con el comando ncol() las columnas.
+```{r dimFC_iris, echo=FALSE}
+nrow(iris)
+ncol(iris)
+```
+
+**Valores faltantes**:
+R provee comandos para consultar si en un dataset hay valores faltantes, usando el comando is.na(), consulta cuantos datos faltantes hay en el dataset.
+Para contar cuantos valores faltantes hay se usa el comando sum().
+```{r faltantes_iris, echo=FALSE}
+sum(is.na(iris))
+```
+Si la suma da un valor de cero, no hay valores faltantes en el dataset de iris.
+
+**1.2 Calculo de medidas de tendencia central y dispersion**  
+
+**Analisis de las variables:**
+Para poder ver un resumen de los datos estadísticos del dataset, se puede usar summary(), en este caso se analizara el resumen estadístico de las variables del dataset.  
+Resumen:
+```{r summary, echo=FALSE}
+summary(iris)
+```
+Para crear la tabla con los datos de las variables de iris se uso un dataframe llamado Resumen_Variables, este almacena vectores con el resumen de los datos obtenidos anteriormente.   
+\newpage
+
+**Tabla de análisis**
+
+```{r tabla_variable, echo=FALSE}
+Resumen_Variables <- data.frame(
+  Variable = c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width"),
+  Mínimo = c(4.3, 2.0, 1.0, 0.1),
+  Q1_25 = c(5.1, 2.8, 1.6, 0.3),
+  Mediana_Q2 = c(5.8, 3.0, 4.35, 1.3),
+  Media = c(5.84, 3.06, 3.76, 1.20),
+  Q3_75 = c(6.4, 3.3, 5.1, 1.8),
+  Máximo = c(7.9, 4.4, 6.9, 2.5)
+)
+```
+```{r variables}
+ print(Resumen_Variables)
+```
+* **Variable Sepal.Length**  
+Mínimo = La flor con el sépalo mas corto mide 4.3 cm  
+Q1 = El 25% de los sepalos tiene una longitud menor a 5.1 cm  
+Mediana = La mitad de los sepalos miden menos de 5.8 cm  
+Media = El promedio de los sepalos miden 5.84 cm  
+Q3 = El 75% de los sepalos tienen una longitud menor de 6.4 cm  
+Máximo = El sepalo mas largo en el conjunto mide 7.9 cm  
+
+* **Variable Sepal.Width**  
+Mínimo: La flor con el sépalo mas estrecho mide 2.0 cm  
+Q1: El 25% de los sepalos tienen un ancho menor a 2.8 cm  
+Mediana: La mitad de los sepalos tienen un ancho menor 3.0 cm  
+Media: El promedio de los sepalos tienen un promedio de 3.06 cm  
+Q3: El 75% de los sepalos tienen un ancho menor a 3.3 cm  
+Máximo: El sepalo mas ancho mide 4.4 cm  
+
+* **Variable Petal.Length**  
+Mínimo: El pétalo mas corto mide 1.0 cm  
+Q1: El 25% de los pétalos miden menos de 1.6 cm  
+Mediana: La mitad de los pétalos miden menos de 4.35 cm  
+Media: El promedio de los pétalos miden 3.76  
+Q3: El 75% de los pétalos miden menos de 5.1 cm  
+Máximo: El pétalo mas largo mide 6.6 cm  
+
+* **Variable Petal.Width**  
+Mínimo: El pétalo mas estrecho mide 0.1 cm  
+Q1: El 25% de los pétalos tienen un ancho menor a 0.3 cm  
+Mediana: La mitad de los pétalos miden menos de 1.3 cm  
+Media: El promedio de los pétalos tienen un ancho de 1.20 cm  
+Q3: El 75% de los pétalos miden menos de 1.8 cm  
+Máximo: El pétalo mas ancho mide 2.5 cm  
+
+**Cálculos por especie**
+
+**Media de las especies:**
+Para obtener la media de las tres especies se usa la función aggregate(), para calcular la media de cada variable, se usa el argumento ~ Species, para indicar que se agruparan los datos por la columna Species y se le indica que se quiere calcular la media con la funcion FUN = mean
+```{r media_especies}
+media_iris <- aggregate(. ~ Species, data = iris, FUN = mean)
+```
+**Resultado del calculo de la Media:**
+```{r media, echo=FALSE}
+print(media_iris)
+```
+* **Análisis media**  
+Setosa: Tiene los sepalos mas anchos con un valor de 3.428 cm y sus pétalos son los mas pequeños en longitud con un valor de 1.462 y ancho 0.246 cm.  
+Versicolor: Tiene los sepalos mas largos que la especie setosa pero mas cortos que virginica.  
+virginica: Cuenta con los sepalos y pétalos mas largos y anchos. Sus pétalos cuentan con una medida de 5.552 cm  de largo y 2.026 cm de ancho.  
+
+```{r boxplot_media, echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(reshape2) 
+
+media_long <- reshape2::melt(iris, id.vars = "Species")
+
+ggplot(media_long, aes(x = Species, y = value, fill = Species)) +
+  geom_boxplot() +
+  facet_wrap(~ variable, scales = "free") +  # Separar por variable
+  labs(title = "Diagrama de Cajas de la Media por Especie",
+       x = "Especie",
+       y = "Valor") +
+  theme_minimal()
+```
+
+**Mediana de las especies:**
+La mediana representa el valor central de los datos de las tres especies, se implementa la función aggregate(), para calcular la mediana de cada variable, se usa el argumento ~ Species, para indicar que se agruparan los datos por la columna Species y se le indica que se quiere calcular la mediana con la función FUN = median
+```{r mediana_especies}
+mediana_iris <- aggregate(. ~ Species, data = iris, FUN = median)
+```
+**Resultado del calculo de la Mediana**
+```{r mediana, echo=FALSE}
+print(mediana_iris)
+```
+* **Análisis mediana**  
+Setosa: Es la especie con sepalos mas anchos con 3.4 cm pero pétalos mas pequeños con 1.5 cm  
+Versicolor: Los datos analizados indican que tiene una longitud de pétalos intermedia con 4.35  
+Virginica: Tiene los valores mas altos en todas las variables excepto en el ancho del pétalo y un poco menor en el ancho del sepalo comparado con la especie setosa.  
+
+```{r boxplot_mediana, echo=FALSE}
+
+mediana_long <- melt(iris, id.vars = "Species")
+
+ggplot(mediana_long, aes(x = Species, y = value, fill = Species)) +
+  geom_boxplot() +
+  stat_summary(fun = median, geom = "point", shape = 20, size = 3, color = "red") +  # Resaltar la mediana
+  facet_wrap(~ variable, scales = "free") +  # Separar por variable
+  labs(title = "Diagrama de Cajas de la Mediana por Especie",
+       x = "Especie",
+       y = "Valor") +
+  theme_minimal()
+```
+
+**Moda de las especies**
+En en el lenguaje de R no existe una función para calcular la moda, por eso es necesario crear una función, se crea una table(x) para los valores de x esta cuenta cuantas veces aparece un valor en la columna. Con wich.max(tab) encuentra la posición del valor con la mayor frecuencia, con names(tab), se obtiene el nombre del valor mas frecuente. Se guarda en la variable moda_iris para imprimir la moda.
+```{r moda_especies}
+# Función para calcular la moda
+calcular_moda <- function(x) {
+  tab <- table(x)  #tabla de frecuencias
+  moda <- names(tab)[which.max(tab)]  #valor con mayor frecuencia
+  return(moda)
+}
+# Calcular la moda para cada variable
+moda_iris <- aggregate(. ~ Species, data = iris, FUN = calcular_moda)
+```
+\newpage
+
+**Resultado del calculo de la Moda**
+```{r moda, echo=FALSE}
+print(moda_iris)
+```
+
+* **Análisis moda** 
+La moda en este caso representara las medidas de los sepalos y pétalos que mas se repiten para cada especie. Con ayuda de la tabla se analizo que la especie de setosa tiende a tener pétalos pequeños y sepalos anchos, la versicolor tiene tamaños intermedios, el valor que mas se repite es el de la longitud del sepalo con 5.5 cm y la especie de virginica tiene los mayores tamaños en sepalos y pétalos.  
+
+```{r boxplot_moda, echo=FALSE}
+moda_long <- melt(iris, id.vars = "Species")
+
+ggplot(moda_long, aes(x = Species, y = value, fill = Species)) +
+  geom_boxplot() +
+  stat_summary(fun = function(x) { as.numeric(names(sort(table(x), decreasing=TRUE)[1])) }, 
+               geom = "point", shape = 20, size = 3, color = "blue") +  # Resaltar la moda
+  facet_wrap(~ variable, scales = "free") +  # Separar por variable
+  labs(title = "Diagrama de Cajas de la Moda por Especie",
+       x = "Especie",
+       y = "Valor") +
+  theme_minimal()
+```
+
+**Varianza de las especies**
+Para obtener la varianza de las tres especies se usa la función aggregate(), para calcular la varianza de cada variable, se usa el argumento ~ Species, para indicar que se agruparan los datos por la columna Species y se le indica que se quiere calcular la varianza con la funcion FUN = var
+
+```{r varianza_especies}
+varianza_iris <- aggregate(. ~ Species, data = iris, FUN = var)
+```
+**Resultado del calculo de la Varianza**
+```{r varianza}
+print(varianza_iris)
+```
+* **Análisis varianza**
+La varianza se enfoca en medir cuanto se dispersan los datos con respecto a su media, la que anteriormente se calculo, entre mayor sea el valor de la varianza mas dispersos están los datos.
+Analizando los datos obtenidos, se puede deducir que la especie de setosa en su variable Sepal.Length tiene la varianza mas baja de 0.1242, esto quiere decir que la longitud de sepalo es mas uniforme en esta especie.
+Por otro lado la varianza mas alta en la misma variable es de virginica con 0.4043, quiere decir que sus sepalos son mas variables entre si.  
+
+```{r boxplot_varianza, echo=FALSE}
+varianza_long <- melt(iris, id.vars = "Species")
+
+ggplot(varianza_long, aes(x = Species, y = value, fill = Species)) +
+  geom_boxplot() +
+  stat_summary(fun = function(x) var(x), 
+               geom = "point", shape = 20, size = 3, color = "purple") +  # Resaltar la varianza
+  facet_wrap(~ variable, scales = "free") +
+  labs(title = "Diagrama de Cajas de la Varianza por Especie",
+       x = "Especie",
+       y = "Valor") +
+  theme_minimal()
+```
+
+**Desviación estándar de las especies**
+Para obtener la desviación estándar de las tres especies se usa la función aggregate(), para calcular la desviación de cada variable, se usa el argumento ~ Species, para indicar que se agruparan los datos por la columna Species y se le indica que se quiere calcular la desviación con la funcion FUN = sd
+
+```{r desviacion_especies}
+desviacion_iris <- aggregate(. ~ Species, data = iris, FUN = sd)
+```
+**Resultado del calculo de la desviación estándar**
+```{r desviacion}
+print(desviacion_iris)
+```
+* **Análisis desviación estándar:**
+Con ayuda de la desviación estándar podemos medir cuanto varían los datos con respecto a la media, si los resultados son altos esto indica que la dispersión es mayor y si los resultados son bajos significa que los datos de las flores están mas agrupados alrededor de la media.  
+Setosa = Según los resultados tiene la menor desviación estandar, quiere decir que las cuatro variables están mas agrupadas y menos dispersas. Las variables en donde es mas evidente ese hecho son Petal.Length con una desviación de 0.1737 y Petal.Width con una desviación de 0.1054  
+Versicolor = La dispersión es mayor que en la especie de setosa pero menor que virginica.  
+Virginica = Tiene la mayor desviación estándar, los datos de esta especie están mas dispersos que los de las otras especies, la variable Petal.Length tiene una desviación de 0.5519 y Petal.Width tiene 0.2747.  
+
+```{r boxplot_desviacion, echo=FALSE}
+desv_est_long <- melt(iris, id.vars = "Species")
+
+ggplot(desv_est_long, aes(x = Species, y = value, fill = Species)) +
+  geom_boxplot() +
+  stat_summary(fun = sd, geom = "point", shape = 20, size = 3, color = "orange") +  # Resaltar la desviación estándar
+  facet_wrap(~ variable, scales = "free") +  # Separar por variable
+  labs(title = "Diagrama de Cajas de la Desviación Estándar por Especie",
+       x = "Especie",
+       y = "Valor") +
+  theme_minimal()
+```
+\newpage
+
+**Histograma variable Petal.Length**
+
+```{r histograma_petal, echo=FALSE,warning=FALSE, message=FALSE}
+# Crear el histograma 
+ggplot(iris, aes(x = Petal.Length)) +
+  geom_histogram(binwidth = 0.5, fill = "lightblue", color = "black") +
+  geom_density(aes(y = ..count.. * 2), color = "red", size = 1.2) +  # Curva de densidad 
+  scale_x_continuous(breaks = seq(1, 7, by = 1), name = "Tamaño del Pétalo (cm)") +  # Eje X 
+  scale_y_continuous(breaks = seq(0, 100, by = 10), name = "Número de Flores") +  # Eje Y 
+  labs(title = "Distribución del Tamaño del Pétalo en Flores Iris") +
+  theme_minimal()
+```
+El histograma muestra la frecuencia con la que aparecen los valores de la longitud del pétalo, en el gráfico las barras azules representan la distribución de los datos.
+Existen dos tipos de agrupación:  
+* Primera agrupación: Se puede apreciar una alta frecuencia de valores pequeños, esto quiere decir que los iris son cortos de 1 a 2 cm.  
+* Segunda agrupación: Entre 3 y 7 se puede ver una mayor dispersión, de los datos esto quiere decir que en este sector hay mas flores variadas con diferentes medidas.
+La curva de densidad de color rojo, permite estimar la densidad de los datos, hay una gran acumulación de datos no dispersos en la primera agrupación, pero por otro lado hay mayor densidad de datos en la agrupación dos.  
+
+\newpage
+
+**Boxplots de Petal.Width**
+
+```{r boxplots_petal, echo=FALSE,warning=FALSE}
+# Crear el boxplot de Petal.Width por especie
+ggplot(iris, aes(x = Species, y = Petal.Width, fill = Species)) +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  scale_y_continuous(name = "Ancho del Pétalo (cm)", breaks = seq(0, 2.5, by = 0.5)) +  # Escala más clara
+  labs(title = "Distribución del Ancho del Pétalo por Especie",
+       x = "Especie",
+       y = "Ancho del Pétalo (cm)") +
+  theme_minimal()
+
+```
+En el bloxplot se puede apreciar que el eje x muestra los tipos de flor, el eje y los intervalos del ancho de los pétalos, los puntos rojos indican valores atipicos. Se puede analizar que setosa tiene los pétalos mas pequeños, virginica posee los pétalos mas anchos y la versicolor esta en un punto medio.
+
+## 2. Tablas de frecuencias y visualización de datos
+**Datos de la bebida favorita:**
+Del grupo de personas se obtuvieron los siguientes datos:  
+* Duff: 4  
+* Sprite: 5  
+* Pepsi: 5  
+* Coca-cola: 6  
+
+Para crear la tabla se usa un dataframe que muestre la bebida y la frecuencia.
+\newpage
+**Tabla de frecuencias de bebidas**  
+```{r tabla_bebida, echo=FALSE}
+Marcas <- c("Duff","Sprite","Pepsi","Coca-cola")
+Frecuencia <- c(4, 5, 5, 6)
+
+tabla_frecuencias <- data.frame(Marcas,Frecuencia)
+tabla_frecuencias
+```
+
+```{r barras_bebida, echo=FALSE}
+#Crear el gráfico de barras
+bp <- barplot(tabla_frecuencias$Frecuencia,
+              names.arg = tabla_frecuencias$Bebidas,
+              col = c("orange","green","blue","red"),
+              main = "Gráfico de barras Bebida Preferida",
+              xlab = "Bebidas",
+              ylab = "Frecuencia",
+              las = 2,  # Mostrar etiquetas de eje X en vertical
+              ylim = c(0, max(tabla_frecuencias$Frecuencia) + 1) # Dejar espacio arriba
+)
+
+#Agregar etiquetas encima de cada barra
+text(x = bp,
+     y = tabla_frecuencias$Frecuencia + 0.2, # Un poco por encima de la barra
+     labels = tabla_frecuencias$Marcas,
+     col = "black",
+     cex = 0.8,
+     adj = 0               
+)
+```
+Como se puede apreciar en el gráfico la bebida mas preferida por el grupo de personas es la coca-cola por otro lado la Sprite y la Pepsi tiene la misma votación y la bebida menos preferida es la Duff
+
+## 3. Análisis del dataset Swiss
+
+**Importar dataset swiss en R**:
+Para importar en dataset de swiss se usa el comando data().
+```{r data_swiss}
+data(swiss)
+```
+**Datos del dataset swiss**:
+Usando el comando head(), se puede ver la estructura del dataset de swiss
+```{r ver_swiss}
+head(swiss)
+```
+
+**Visualizar la estructura de Swiss**
+Con el comando str() se puede visualizar la estructura del conjuto de datos de swiss
+```{r estructura_swiss}
+str(swiss)
+```
+Usando el comando colnames() se pueden ver las columnas del dataset
+```{r colum_swiss}
+colnames(swiss)
+```
+Las columnas encontraron fueron:  
+Fertility : Fertilidad  
+Agriculture: Agricultura  
+Examination: Examenes  
+Education: Educación  
+Catholic: Porcentaje de Catolicos  
+Infant.Mortality: Mortalidad infantil  
+
+**Verificación tipos de datos:**
+Usando la función sapply() con la función class() se puede ver el tipo de dato de cada columna del dataset,se encontro que de las seis variables cuatro son del tipo numerico pero Examination y Education son de tipo integer lo que significa que sus valores son de tipo entero, los de tipo numerico permiten punto decimal.
+
+```{r tipodato_swiss}
+sapply(swiss, class)
+```
+
+**Principales indicadores Estadisticos**
+
+**Calculo del valor de la Media**
+Para calcular la media de cada varible se usa la función mean().  
+\newpage
+**Variable Fertility**
+```{r media_fertility}
+mean(swiss$Fertility)
+```
+**Variable Infant.Mortality**
+```{r media_Infant}
+mean(swiss$Infant.Mortality)
+```
+
+**Calculo del valor de la Mediana:**
+Para calcular la mediana de cada variable se usa la función median(). 
+
+**Variable Fertility**
+```{r mediana_fertility}
+median(swiss$Fertility)
+```
+**Variable Infant.Mortality**
+```{r mediana_Infant}
+median(swiss$Infant.Mortality)
+```
+
+**Calculo del valor de la Varianza:**
+Para calcular la varianza de cada variable se usa la función var().
+
+**Variable Fertility**
+```{r varianza_fertility}
+var(swiss$Fertility)
+```
+\newpage
+**Variable Infant.Mortality**
+```{r varianza_Infant}
+var(swiss$Infant.Mortality)
+```
+
+**Calculo del valor de la Desviación estándar:**
+La desviación estandar se calcula con la función sd().  
+
+**Variable Fertility**
+```{r desviacion_fertility}
+sd(swiss$Fertility)
+```
+**Variable Infant.Mortality**
+```{r desviacion_Infant}
+sd(swiss$Infant.Mortality)
+```
+
+**Calculo del valor Mínimo:**
+Para calcular el valor minimo de las variables se usa la función min().  
+\newpage
+**Variable Fertility**
+```{r minimo_fertility}
+min(swiss$Fertility)
+```
+**Variable Infant.Mortality**
+```{r minimo_Infant}
+min(swiss$Infant.Mortality)
+```
+**Calculo del valor Máximo**  
+Para calcular el maximo se usa la función max(). 
+
+**Variable Fertility**
+```{r maximo_fertility}
+max(swiss$Fertility)
+```
+**Variable Infant.Mortality**
+```{r maximo_Infant}
+max(swiss$Infant.Mortality)
+```
+
+## 4. Notas de estudiantes y analisis de aprobación
+
+**Información de las notas de los estudiantes**  
+```{r notas_estu, echo=FALSE}
+notasE = c(4.1, 2.7, 3.1, 3.2, 3.0, 3.2, 2.0, 2.4, 1.6, 3.2, 3.1, 2.6, 2.0, 2.4, 2.8,
+           3.3, 4.0, 3.4, 3.0, 3.1, 2.7, 2.7, 3.0, 3.8, 3.2, 2.2, 3.5, 3.5, 3.8, 3.5,
+           3.9, 4.2, 4.3, 3.9, 3.2, 3.5, 3.5, 3.7, 4.1, 3.7, 3.5, 3.6, 3.2, 3.1, 3.4,
+           3.0, 3.0, 3.0, 2.7, 1.7, 3.6, 2.1, 2.4, 3.0, 3.1, 2.5, 2.5, 3.6, 2.2, 2.4,
+           3.1, 3.3, 2.7, 3.7, 3.0, 2.7, 3.0, 3.2, 3.1, 2.4, 3.0, 2.7, 2.5, 3.0, 3.0,
+           3.0, 3.2, 3.1, 3.8, 4.1, 3.7, 3.5, 3.0, 3.7, 3.7, 4.1, 3.7, 3.9, 3.7, 2.0)
+notas_matriz <- matrix(notasE, ncol = 10, byrow = TRUE)#organizar columnas
+print(notas_matriz)
+```
+**Tabla de frecuencias absolutas**
+Con una tabla de frecuencia absoluta se puede saber cuantas veces aparece un valor, para esto se usa la función table() que cuenta cuantas veces aparece cada valor único.
+```{r tabla_adsoluta}
+tabla_adsoluta <- table(notasE)
+```
+**Resultado frecuencias absolutas**
+```{r ver_tabla_adsoluta}
+print(tabla_adsoluta)
+```
+
+**Tabla de frecuencias relativas**
+La tabla de frecuencias relativas permite ver la proporción de cada valor en relación con el total, en este caso la función prop.table(tabla_adsoluta), divide cada valor de la tabla absoluta por el total de observaciones.
+```{r tabla_relativa}
+tabla_relativa <- prop.table(tabla_adsoluta)
+```
+**Resultado frecuencias relativas**
+```{r ver_tabla_relativa}
+print(tabla_relativa)
+```
+
+**Tabla de frecuencias acumuladas**
+Permite ver el porcentaje acumulado, usando la función cumsum(), se suman progresivamente las frecuencias absolutas, permite saber cuantos estudiantes tienen una notar menor o igual a un valor que busquemos.
+```{r tabla_acumulada}
+tabla_acumulada <- cumsum(tabla_adsoluta)
+```
+**Resultado frecuencias acumuladas**
+```{r ver_tabla_acumulada}
+print(tabla_acumulada)
+```
+
+**Tabla de frecuencias relativas acumuladas**
+Con esta tabla se puede saber como se distribuyen los datos, conociendo su comportamiento y su tendencia.
+```{r tabla_acumulada_relativa}
+tabla_relativa_acumulada <- cumsum(tabla_relativa)
+```
+**Resultado frecuencias relativas acumuladas**
+```{r ver_tabla_acumulada_relativa}
+print(tabla_relativa_acumulada)
+```
+
+**Tabla de distribución de frecuencias notas de estudiantes**
+La tabla de distribución de frecuencias se crea con base a las frecuencias absolutas, relativas y acumuladas calculadas anteriormente.
+```{r ver_tablaDisFre, echo=FALSE, message=FALSE, warning=FALSE}
+# Cargar la librería necesaria
+library(knitr)
+library(kableExtra)
+
+# Crear la tabla con nombres
+tabla_distribucion_frecuencias <- data.frame(
+  Nota = as.numeric(names(tabla_adsoluta)),
+  Freq = as.numeric(tabla_adsoluta),
+  `Freq. Rel` = as.numeric(tabla_relativa),
+  `Freq. Acum` = as.numeric(tabla_acumulada),
+  `Freq. Rel. Acum` = as.numeric(tabla_relativa_acumulada)
+)
+
+# Generar la tabla
+knitr::kable(tabla_distribucion_frecuencias, 
+      digits = 4) %>%
+  kable_styling(latex_options = "scale_down") 
+
+```
+\newpage
+**Gráficos visualizar datos de las notas**
+
+El histograma permite ver como se distribuyen las notas de los estudiantes
+```{r histograma_notas,echo=FALSE}
+hist(notasE, #notas vector
+           main = "Histograma Notas estudiantes", #titulo
+           xlab = "Notas", #label x
+           ylab = "Frecuencias", #label y
+           col = "skyblue", #color barras
+           border = "black",
+           breaks = 10
+)
+```
+Con un gráfico de barras de la frecuencia absoluta se puede ver la frecuencia de cada nota, usa la función barplot para indicar a R que es este tipo de gráfico.
+```{r barras_notas, echo=FALSE}
+barplot(tabla_adsoluta,
+           main = "Frecuencia de notas de los Estudiantes", #titulo
+           xlab = "Notas", #label x
+           ylab = "Frecuencias", #label y
+           col = "lightcoral", #color barras
+           border = "black",
+)
+```
+
+**Indicadores estadísticos Notas estudiantes**
+
+**Media de notas**
+```{r mediaIndicador}
+media_notas <- mean(notasE)
+print(media_notas)
+```
+\newpage
+**Mediana de notas**
+```{r medianaIndicador}
+mediana_notas <- median(notasE)
+print(mediana_notas)
+```
+
+**Moda de notas**
+```{r modaIndicador}
+moda_notas <- as.numeric(names(sort(table(notasE), decreasing = TRUE)[1]))
+print(moda_notas)
+```
+
+**Varianza de notas**
+```{r varianzaIndicador}
+varianza_notas <- var(notasE)
+print(varianza_notas)
+```
+
+**Desviación estándar de notas**
+```{r desviacionIndicador}
+desviacion_estandar_notas <- sd(notasE)
+print(desviacion_estandar_notas)
+```
+\newpage
+**Indicadores estadísticos de las notas:**
+```{r indicadoresGeneralesNotas, echo=FALSE, message=FALSE, warning=FALSE}
+library(kableExtra)
+
+knitr::kable(
+  data.frame(Indicador = c("Media", "Mediana", "Moda", "Varianza", "Desviación estándar"),
+             Valor = c(media_notas, mediana_notas, moda_notas, varianza_notas, desviacion_estandar_notas)),
+  digits = 4,
+  align = "c"
+) %>%
+  kable_styling(full_width = FALSE, position = "center", bootstrap_options = c("striped", "hover", "condensed"))
+
+```
+**Pregunta del ejercicio**
+¿Que porcentaje de los estudiantes reprobaron la evaluación? Nota final < 3.0  
+
+Para calcular el porcentaje de estudiantes se puede usar la frecuencia acumulada de los estudiantes con notas inferiores a 3.0 y dividirla en el total de los estudiantes. Se usa la tabla de tabla_distribucion_frecuencia.
+
+```{r pregunta}
+# Notas menores a 3.0
+reprobados <- tabla_distribucion_frecuencias[tabla_distribucion_frecuencias$Nota < 3.0, ]
+
+# Sumar las frecuencias de los reprobados
+total_reprobados <- sum(reprobados$Freq, na.rm = TRUE)
+
+# Total de estudiantes
+total_estudiantes <- sum(tabla_distribucion_frecuencias$Freq, na.rm = TRUE)
+
+# Calcular el porcentaje 
+porcentaje_reprobados <- (total_reprobados / total_estudiantes) * 100
+
+sprintf("El porcentaje de estudiantes reprobados es: %.2f%%", porcentaje_reprobados)
+
+```
+\newpage
+## 5. Distribución de cargos en una empresa por genero
+
+**Tabla distribución empleados por cargo y genero**
+```{r tabla_empleados, echo=FALSE}
+tabla_empleados <- data.frame(
+  Cargo = c("Administrativo", "Operativo", "Vendedor"),
+  Mujer = c(32, 62, 132),
+  Hombre = c(21, 140, 55)
+) 
+
+knitr::kable(tabla_empleados, align = "c")
+```
+
+
+```{r grafico1, echo=FALSE,warning=FALSE,message=FALSE}
+#datos a formato largo (tidy)
+library(dplyr)             
+library(tidyr)     
+tabla_empleados_long <- tabla_empleados %>%
+  pivot_longer(cols = c("Mujer", "Hombre"), names_to = "Sexo", values_to = "Cantidad")
+
+# Crear el gráfico
+ggplot(tabla_empleados_long, aes(x = Cargo, y = Cantidad, fill = Sexo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Distribución del Sexo por Cargo", x = "Cargo", y = "Cantidad") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Mujer" = "pink", "Hombre" = "blue"))
+```
+
+```{r grafico2, echo=FALSE,warning=FALSE,message=FALSE}
+ggplot(tabla_empleados_long, aes(x = Sexo, y = Cantidad, fill = Cargo)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Distribución del Cargo por Sexo", x = "Sexo", y = "Cantidad") +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set2")
+```
+
+## 6. Generación de gráficos con herramientas de IA
+
+Para la generación de los gráficos se utilizara la herramienta Tableau AI, para hacer esto es necesario 
+guardar los datos que se tienen de R en un formato compatible como CSV.
+
+Con este código se toman los datos de la tabla_empleados, para guardarlos en un CSV para subirlo a Tableau AI para generar los gráficos.
+
+**Grafico distribución del sexo por cargo Tableau AI**
+```{r convertir_distribucion,warning=FALSE,message=FALSE}
+write.csv(tabla_empleados, "datos_empleados.csv", row.names = FALSE)
+
+```
+
+Después de subir el archivo a tableau public se descarga el gráfico generado en formato PNG, se guarda en el proyecto y para poder colocar el gráfico en R se usa readPNG(), en el cual se le indica la ruta de la imagen
+
+```{r vergrafico1,warning=FALSE,message=FALSE}
+library(png)
+library(grid)
+
+ruta_img1 <- file.path(getwd(), "Sheet 1.png")
+img1 <- readPNG(ruta_img1)
+grid.raster(img1)
+```
+**Comparación de gráficos de distribución del sexo por cargo**
+
+Después de realizar el gráfico con la herramienta, se pudo apreciar diferencias significativas, la primera fue que el gráfico de barras creado con tableau tiene la distribución de las etiquetas de Hombre y mujer de forma distinta, ya que este crea 3 barras para los 3 cargos, pero agrega la diferenciación por medio de partir las barras en dos con colores distintos. Por otro lado en R la gráfica se genera con 6 barras para diferenciar los hombres y las mujeres.
+
+**Tabla de frecuencias de bebidas**  
+La siguiente tabla que se va a comparar es la tabla realizada en el apartado 2, la cual detalla la preferencia de un tipo de bebida por un grupo de personas. Se usa la función write.csv() para convertir los datos que se tienen en tabla_frecuencias, y poder subir este archivo en la herramienta.
+
+```{r convertir_frecuencias,warning=FALSE,message=FALSE}
+write.csv(tabla_frecuencias, "tabla_bebidas.csv", row.names = FALSE)
+
+```
+
+Después de tener el .csv se sube a tableau, se crea el gráfico con esta herramienta y se descarga en formato PNG, se guarda en el proyecto y para poder colocar el gráfico en R se usa readPNG(), en el cual se le indica la ruta de la imagen, en este caso es solo el nombre de la imagen sheet 2.png porque se agregaron las imagenes al directorio principal del proyecto, se aplico file.path para asegurar que en cualquier sistema operativo se pueda leer la imagen.
+
+```{r vergrafico2,warning=FALSE,message=FALSE}
+library(png)
+library(grid)
+
+ruta_img2 <- file.path(getwd(), "Sheet 2.png")
+img2 <- readPNG(ruta_img2)
+grid.raster(img2)
+```
+
+**Comparación de tabla de frecuencias de bebidas**
+
+El gráfico generado con la herramienta es muy similar en la distribución de los datos al gráfico de R, pero se diferencia en la claridad del diseño ya que las etiquetas en el gráfico de barras de tableau son mas, claras están debajo de cada barra y se creo un pequeño index que ayuda a entender los datos, pero por otro lado el gráfico de R también cuenta con etiquetas pero están en la parte superior y no están centradas.
+Estos errores se pueden corregir en el código de R pero es mas engorroso y en cambio con el uso de la herramienta se creo un gráfico claro y organizado de una manera muy sencilla.
+Ambas tablas comparten la misma información de manera clara la única diferencia es la posición de cada barra entre las tablas, cada una expresa los mismos datos pero en distinto orden en el eje x pero no cambia la media del eje y.
+
